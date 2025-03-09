@@ -1,14 +1,20 @@
 #include <iostream>
 #include <queue>
-#include <cstring>
+#include <cstring> // memset
 using namespace std;
+
+// 2차원 좌표에 대한 기본 정의
 typedef pair<int, int> CD;
 #define X first
 #define Y second
+
+// 객체로써의 사람 구조체
 struct Human {
 	int x, y;
 	bool isTimeWall;
 };
+
+// 객체로써의 이상현상 구조체
 struct Anomaly {
 	int x, y;
 	int d;
@@ -73,11 +79,11 @@ void init() {
 
 	// 시간의 벽 서쪽
 	for (int x = M - 1; x >= 0; x--) {
-		for (int y = M; y < 2*M; y++) {
+		for (int y = M; y < 2 * M; y++) {
 			cin >> timewall[y][x];
 		}
 	}
-	
+
 	// 시간의 벽 남쪽
 	for (int y = 2 * M; y < 3 * M; y++) {
 		for (int x = M; x < 2 * M; x++) {
