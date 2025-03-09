@@ -1,40 +1,51 @@
 #include <iostream>
 #include <queue>
 #include <stack>
-#include <cmath>
-#include <cstring>
-#include <iomanip>
+#include <cmath> // abs
+#include <cstring> // memset
+#include <iomanip> // setw
 using namespace std;
+
+// 2차원 좌표에 대한 기본 정의
 typedef pair<int, int> PI;
 #define X first
 #define Y second
+
+// 메두사의 이동 경로를 추적하기 위해 필요한 구조체
 struct Path {
 	int x, y;
 	bool isVisit;
 };
+
+// 객체로써의 메두사 구조체
 struct Medusa {
 	int x, y, dir;
 	bool isArrived;
 };
+
+// 메두사의 시야에 대한 구조체
 struct Sight {
 	int x, y, dx, dy;
 };
+
+// 객체로써의 전사 구조체
 struct Warrior {
 	int x, y, d;
 	bool isDie, isStone;
 };
 
-int N, M, stone, attacker, totalD;
-int board[50][50];
-int cnt[4][50][50];
-Path path[50][50];
-PI S, E;
-Medusa MDS;
-Warrior W[300];
+int N, M, totalD, stone, attacker; // N, M, 모든 전사가 이동한 거리의 합, 메두사로 인해 돌이 된 전사의 수, 메두사를 공격한 전사의 수
+int board[50][50]; // board
+int cnt[4][50][50]; // 메두사가 바라보는 네 방향에 대해서 보이는 전사, 메두사의 시야 영역, 전사에 의해 가려지는 영역을 저장
+Path path[50][50]; // 메두사의 최단 이동 경로를 얻기 위해 Path 구조체의 2차원 배열
+PI S, E; // 메두사의 집, 공원
+Medusa MDS; // 메두사 객체
+Warrior W[300]; // 전사 객체들
 int dx[] = { 0, 0, -1, 1 }; // 우선 순위는
 int dy[] = { -1, 1, 0, 0 }; // 상, 하, 좌, 우
-stack<PI> Road;
+stack<PI> Road; // 도착 지점에서 출발 지점까지 돌아오면서 최단 경로 각각의 좌표를 역순으로 담기 위해서
 
+// 매 턴마다 보드 등의 상태를 출력해보며 디버깅
 void check(int dir) {
 	cout << "====================\n";
 	for (int y = 0; y < N; y++) {
@@ -82,6 +93,7 @@ inline bool OOB(int x, int y) {
 }
 
 // 메두사가 공원으로 가는 최단 경로를 찾아낸다. 공원에 도착할 수 없다면 false를 반환한다.
+// 단순 BFS. 다음 좌표가 목적지라면 true를 반환한다.
 bool findMedusaRoad() {
 	queue<Path> Q;
 	path[S.Y][S.X] = { S.X, S.Y, true };
@@ -101,6 +113,8 @@ bool findMedusaRoad() {
 	return false;
 }
 
+// 최단 경로가 존재한다면, 도착 지점(E)에서부터 저장된 좌표(현재 좌표에 도달하기 직전, 어디서 왔는지)를 Stack에 Push.
+// Stack의 특성 상, 도착 지점에서부터 좌표를 Push하면 마지막에 Pop되는 순서는 결국 출발 지점부터 시작하게 된다.
 void makeMedusaRoad() {
 	queue<PI> Q;
 	Q.push(E);
@@ -112,18 +126,22 @@ void makeMedusaRoad() {
 	}
 }
 
+// 메두사가 이동한 칸에 전사가 있는 경우를 처리한다.
 inline void dieWarrior() {
 	for (int m = 0; m < M; m++) {
 		if (MDS.x == W[m].x && MDS.y == W[m].y) W[m].isDie = true;
 	}
 }
 
+// 메두사의 이동을 처리한다.
+// 단순히 Stack에서 Pop한 좌표가 메두사의 다음 이동 칸이다.
 void moveMedusa() {
 	PI next = Road.top(); Road.pop();
 	MDS.x = next.X; MDS.y = next.Y;
 	dieWarrior();
 }
 
+// 메두사의 시선에 따라 가려지는 영역의 경계를 표시(처리)한다.
 void shadow(Sight sight, int dir) {
 	queue<PI> Q;
 	if (sight.dx != 0 && sight.dy != 0) {
@@ -140,6 +158,11 @@ void shadow(Sight sight, int dir) {
 	}
 }
 
+// 메두사의 시선을 처리한다.
+// 4방향을 보는 경우를 모두 따져보고 counting(돌이 되는 전사의 수)가 가장 많은 dir(방향)을 Medusa 객체에 저장한다.
+// 또한 방향이 다르면 돌이 되는 전사, 가려지는 시야 영역이 모두 다르기 때문에 cnt배열 4개를 만들어둔다.
+// 전사가 돌이 되는 것과 시야가 가려지는 것은 단순히 2차원 배열 위에 전사가 있는지 없는지가 중요하기 때문에 cnt의 각 위치에 몇 명이 있는지로 기록.
+// 즉, 돌이 되는 건 따로 처리하는 것이 편하다.
 void lookMedusa() {
 	memset(cnt, 0, sizeof(cnt));
 	for (int m = 0; m < M; m++) {
@@ -215,21 +238,26 @@ void lookMedusa() {
 	}
 }
 
+// 돌이 되는 전사를 처리한다.
 void makeStone() {
 	for (int m = 0; m < M; m++) {
 		if (cnt[MDS.dir][W[m].y][W[m].x] == -2) W[m].isStone = true;
 	}
 }
 
+// 좌표를 입력 받아 메두사와의 맨해튼 거리를 반환한다.
 inline int distance(int x, int y) {
 	return abs(MDS.x - x) + abs(MDS.y - y);
 }
 
+// 전사가 메두사를 공격하고 사라지는 것을 처리한다.
 void attackMedusa(int m) {
 	attacker++;
 	W[m].isDie = true;
 }
 
+// 전사의 이동을 처리한다.
+// 주의할 점은 첫 번째 이동과 두 번째 이동의 우선 순위가 다르다. 방향 회전과 마찬가지로 % 연산을 통해서 수행한다.
 void moveWarrior() {
 	for (int m = 0; m < M; m++) {
 		if (W[m].isStone || W[m].isDie) continue;
@@ -259,12 +287,14 @@ void moveWarrior() {
 	}
 }
 
+// 돌이 된 전사들은 다음 턴이 되면 돌에서 풀려나는 것을 처리한다.
 inline void resetStone() {
 	for (int m = 0; m < M; m++) {
 		W[m].isStone = false;
 	}
 }
 
+// 전체적으로 한 턴 씩 수행한다.
 void solve() {
 	if (findMedusaRoad()) makeMedusaRoad();
 	else {
