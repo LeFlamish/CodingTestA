@@ -2,7 +2,22 @@
 #include <queue> // 큐를 사용하기 위한 라이브러리(STL)
 using namespace std;
 
+// 큐는 BFS(너비 우선 탐색)에 핵심으로 사용되기 때문에 코딩테스트에서 필수로 나온다.
 queue<int> Q; // queue<자료형> 변수 이름(큐 이름);
+
+// 당연하게도 구조체 등의 모든 자료형이 들어갈 수 있다. 큐뿐만이 아니라 스택, 덱 등의 자료구조에도 모든 자료형이 들어갈 수 있다.
+// ex.1
+struct Human {
+	int x, y, age;
+	bool isAlive;
+};
+queue<Human> human;
+
+// ex.2
+typedef pair<int, int> PI;
+#define X first
+#define Y second
+queue<PI> QQ;
 
 int main() {
 	cin.tie(0)->sync_with_stdio(0);
