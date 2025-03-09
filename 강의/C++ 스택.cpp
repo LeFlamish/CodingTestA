@@ -2,7 +2,7 @@
 #include <stack> // 스택을 사용하기 위한 라이브러리(STL)
 using namespace std;
 
-stack<int> S; // stack<자료형> 변수 이름(스택 이름)
+stack<int> S; // stack<자료형> 변수 이름(스택 이름);
 
 int main() {
 	cin.tie(0)->sync_with_stdio(0);
