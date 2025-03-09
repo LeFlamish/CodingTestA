@@ -2,7 +2,7 @@
 #include <queue> // 큐를 사용하기 위한 라이브러리(STL)
 using namespace std;
 
-queue<int> Q; // queue<자료형> 변수 이름(큐 이름)
+queue<int> Q; // queue<자료형> 변수 이름(큐 이름);
 
 int main() {
 	cin.tie(0)->sync_with_stdio(0);
