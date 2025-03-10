@@ -18,7 +18,7 @@ int main() {
 		cout << i << ' ';
 	}
 	cout << '\n';
-	FOR(i, 10) {
+	FOR(i, 10) { // for문 축약형
 		cout << arr[i] << ' ';
 	}
 	return 0;
