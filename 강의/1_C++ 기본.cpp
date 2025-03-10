@@ -3,6 +3,7 @@
 
 #include <iostream> // C++에서는 stdio.h 대신 iostream 사용
 using namespace std; // cin, cout 등의 함수의 위치는 std에 있음. 매번 std::cin, std::cout으로 써주기 귀찮기 때문에 자동으로 std 채우는 코드
+#define FOR(i, N) for(int i = 0; i < N; i++) // for문을 축약해서 쓸 수도 있다.
 
 int x, y, z;
 String str; // C++은 String(문자열) 자료형이 존재한다.
@@ -15,6 +16,10 @@ int main() {
 	cout << x << ' ' << y << z << '\t' << str << '\n'; // cout으로 출력한다. 연속적인 출력 가능.
 	for (auto i : arr) { // C++에서는 반복자를 설정해서 반복문을 돌릴 수도 있다.
 		cout << i << ' ';
+	}
+	cout << '\n';
+	FOR(i, 10) {
+		cout << arr[i] << ' ';
 	}
 	return 0;
 }
