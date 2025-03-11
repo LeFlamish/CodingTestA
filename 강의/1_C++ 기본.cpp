@@ -6,7 +6,7 @@ using namespace std; // cin, cout 등의 함수의 위치는 std에 있음. 매�
 #define FOR(i, N) for(int i = 0; i < N; i++) // for문을 축약해서 쓸 수도 있다.
 
 int x, y, z;
-String str; // C++은 String(문자열) 자료형이 존재한다.
+string str; // C++은 String(문자열) 자료형이 존재한다.
 auto var; // C++에서는 자동으로 자료형을 맞춰주는 auto 자료형이 존재한다.
 int arr[10];
 
