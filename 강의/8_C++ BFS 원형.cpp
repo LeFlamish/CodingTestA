@@ -2,6 +2,8 @@
 #include <queue>
 using namespace std;
 
+// R(행)이 세로축 값이고, C(열)이 가로축 값임을 그냥 머리에 박도록 하자.
+
 // 두 개의 자료형을 묶어주는 pair.
 // pair<String, int> 이런 식으로 사용 가능.
 // 각 값에 접근하기 위해서는 first, second 키워드 사용.
