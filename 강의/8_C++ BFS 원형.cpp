@@ -35,6 +35,18 @@ bool visited[10][10]; // 최단 거리를 계산하기 위해서는 visited 배�
 int dx[] = { 1, 0, -1, 0 };
 int dy[] = { 0, 1, 0, -1 };
 
+// board나 visited 등 2차원 배열, 변수, 상태 등을 출력하면서 확인할 수 있는 디버깅 함수.
+void debug() {
+	cout << "====================\n";
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x < N; x++) {
+			cout << visited[y][x];
+		}
+		cout << '\n';
+	}
+	cout << "====================\n";
+}
+
 void init() {
 	cin >> N;
 	// for문에서 변수도 의미있게 설정하면 보기 편함.
@@ -71,5 +83,6 @@ int main() {
 	cin.tie(0)->sync_with_stdio(0);
 	init();
 	BFS(0, 0);
+	// debug();
 	return 0;
 }
