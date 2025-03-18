@@ -1,4 +1,5 @@
-#include <stdio.h>
+#define _CRT_SECURE_NO_WARNIGNS // 안쓰려면 scanf_s 사용
+#include <stdio.h> 
 
 // 배열 회전은 반드시 여분의 배열이 필요하다.
 // 배열 회전에서는 인덱스만 잘 계산해도 단순 2중 for문으로 해결 가능하다.
