@@ -5,6 +5,9 @@ int N, M;
 int answer[10];
 bool selected[10];
 
+// 뽑는 숫자의 수가 3개 이하로 고정되어 있으면 for문 돌리는 것이 편함.
+// 뽑는 숫자의 수가 3개 이상이거나 변동되면 반드시 재귀 함수.
+
 // 중복 순열
 void select1(int cnt) {
 	if (cnt == M) {
