@@ -57,7 +57,7 @@ void init() {
 	}
 }
 
-bool OOB(int x, int y) {
+inline bool OOB(int x, int y) {
 	return x < 0 || x >= N || y < 0 || y >= N;
 }
 
