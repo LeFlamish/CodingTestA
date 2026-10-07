@@ -61,7 +61,7 @@ void Damage(Point point, int damage) {
     if (turret.power <= 0)
         return;
 
-    turret.power -= damage;
+    turret.power -= damage; // turret.power = max(0, turret.power - damage);로 쓰면 if(!turret.power)와 같은 방식으로 사용 가능.
     attacked[point.x][point.y] = true;
 
     // 이번 공격으로 부서진 경우
