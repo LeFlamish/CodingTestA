@@ -50,7 +50,7 @@ int dy[4] = { 1, 0, -1, 0 };
 int bx[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 int by[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 
-bool IsSame(Point p1, Point p2) {
+inline bool IsSame(Point p1, Point p2) {
     return p1.x == p2.x && p1.y == p2.y;
 }
 
