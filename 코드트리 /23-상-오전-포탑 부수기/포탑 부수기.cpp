@@ -33,7 +33,7 @@ struct Turret {
 
 int N, M, K;
 
-Turret turrets[11][11];
+Turret turrets[11][11]; // 모든 위치에 포탑이 존재한다면, 굳이 int board와 Turret turrets를 따로 둘 필요가 있을까?
 
 bool attacked[11][11];
 bool visited[11][11];
