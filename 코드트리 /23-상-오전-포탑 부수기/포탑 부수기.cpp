@@ -10,7 +10,7 @@ struct Point {
 };
 
 struct Turret {
-    int x, y; // Turret 구조체 자체를 2차원 배열로 쓰기 때문에 중복된 데이터이긴 하지만, operator 함수 사용을 위해 추가
+    int x, y; // operator < 에서 좌표 비교를 위해 저장
     int power;
     int lastAttack;
 
@@ -33,8 +33,9 @@ struct Turret {
 };
 
 int N, M, K;
+int aliveCount;
 
-Turret turrets[11][11]; // 모든 위치에 포탑이 존재한다면, 굳이 int board와 Turret turrets를 따로 둘 필요가 있을까?
+Turret turrets[11][11];
 
 bool attacked[11][11];
 bool visited[11][11];
@@ -53,17 +54,19 @@ bool IsSame(Point p1, Point p2) {
     return p1.x == p2.x && p1.y == p2.y;
 }
 
-int CountAlive() {
-    int cnt = 0;
+void Damage(Point point, int damage) {
+    Turret& turret = turrets[point.x][point.y];
 
-    for (int x = 0; x < N; x++) {
-        for (int y = 0; y < M; y++) {
-            if (turrets[x][y].power > 0)
-                cnt++;
-        }
-    }
+    // 이미 부서진 포탑
+    if (turret.power <= 0)
+        return;
 
-    return cnt;
+    turret.power -= damage;
+    attacked[point.x][point.y] = true;
+
+    // 이번 공격으로 부서진 경우
+    if (turret.power <= 0)
+        aliveCount--;
 }
 
 Point SelectAttacker() {
@@ -128,6 +131,7 @@ bool LaserAttack(Point attacker, Point target) {
             if (visited[nx][ny])
                 continue;
 
+            // 부서진 포탑은 지나갈 수 없음
             if (turrets[nx][ny].power <= 0)
                 continue;
 
@@ -145,15 +149,13 @@ bool LaserAttack(Point attacker, Point target) {
     int damage = turrets[attacker.x][attacker.y].power;
 
     // 공격 대상
-    turrets[target.x][target.y].power -= damage;
-    attacked[target.x][target.y] = true;
+    Damage(target, damage);
 
     // 공격 대상과 공격자 사이의 경로
     Point cur = prevPoint[target.x][target.y];
 
     while (!IsSame(cur, attacker)) {
-        turrets[cur.x][cur.y].power -= damage / 2;
-        attacked[cur.x][cur.y] = true;
+        Damage(cur, damage / 2);
 
         cur = prevPoint[cur.x][cur.y];
     }
@@ -165,8 +167,7 @@ void BombAttack(Point attacker, Point target) {
     int damage = turrets[attacker.x][attacker.y].power;
 
     // 공격 대상
-    turrets[target.x][target.y].power -= damage;
-    attacked[target.x][target.y] = true;
+    Damage(target, damage);
 
     // 공격 대상 주변 8방향
     for (int dir = 0; dir < 8; dir++) {
@@ -177,12 +178,15 @@ void BombAttack(Point attacker, Point target) {
         if (nx == attacker.x && ny == attacker.y)
             continue;
 
-        // 부서진 포탑은 피해 없음
+        // 이미 이번 공격에 피해를 받은 위치
+        if (attacked[nx][ny])
+            continue;
+
+        // 이미 부서진 포탑
         if (turrets[nx][ny].power <= 0)
             continue;
 
-        turrets[nx][ny].power -= damage / 2;
-        attacked[nx][ny] = true;
+        Damage({ nx, ny }, damage / 2);
     }
 }
 
@@ -203,18 +207,21 @@ void Repair() {
 }
 
 void Debug() {
-    for (int y = 1; y <= N; y++) {
-        for (int x = 1; x <= M; x++) {
-            cout << setw(4) << turrets[y][x] << ' ';
+    for (int x = 0; x < N; x++) {
+        for (int y = 0; y < M; y++) {
+            cout << setw(4) << turrets[x][y].power << ' ';
         }
         cout << '\n';
     }
+    cout << '\n';
 }
 
 void Init() {
     cin.tie(0)->sync_with_stdio(0);
 
     cin >> N >> M >> K;
+
+    aliveCount = 0;
 
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < M; y++) {
@@ -223,13 +230,16 @@ void Init() {
             turrets[x][y].x = x;
             turrets[x][y].y = y;
             turrets[x][y].lastAttack = 0;
+
+            if (turrets[x][y].power > 0)
+                aliveCount++;
         }
     }
 }
 
 void Solve() {
     for (int turn = 1; turn <= K; turn++) {
-        if (CountAlive() <= 1)
+        if (aliveCount <= 1)
             break;
 
         memset(attacked, false, sizeof(attacked));
@@ -250,7 +260,7 @@ void Solve() {
             BombAttack(attacker, target);
 
         // 3. 포탑 부서짐
-        // power <= 0인 포탑을 부서진 것으로 판단하므로 별도 처리 없음
+        // Damage()에서 power <= 0이 되는 순간 aliveCount 감소
 
         // 4. 포탑 정비
         Repair();
