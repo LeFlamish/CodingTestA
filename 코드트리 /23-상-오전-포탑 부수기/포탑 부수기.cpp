@@ -205,7 +205,7 @@ void Repair() {
 void Debug() {
     for (int y = 1; y <= N; y++) {
         for (int x = 1; x <= M; x++) {
-            cout << setw(4) << board[y][x] << ' ';
+            cout << setw(4) << turrets[y][x] << ' ';
         }
         cout << '\n';
     }
