@@ -58,14 +58,14 @@ void Damage(Point point, int damage) {
     Turret& turret = turrets[point.x][point.y];
 
     // 이미 부서진 포탑
-    if (turret.power <= 0)
+    if (!turret.power)
         return;
 
     turret.power -= damage;
     attacked[point.x][point.y] = true;
 
     // 이번 공격으로 부서진 경우
-    if (turret.power <= 0)
+    if (!turret.power)
         aliveCount--;
 }
 
@@ -74,7 +74,7 @@ Point SelectAttacker() {
 
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < M; y++) {
-            if (turrets[x][y].power <= 0)
+            if (!turrets[x][y].power)
                 continue;
 
             if (attacker.x == -1 ||
@@ -92,7 +92,7 @@ Point SelectTarget(Point attacker) {
 
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < M; y++) {
-            if (turrets[x][y].power <= 0)
+            if (!turrets[x][y].power)
                 continue;
 
             if (x == attacker.x && y == attacker.y)
@@ -132,7 +132,7 @@ bool LaserAttack(Point attacker, Point target) {
                 continue;
 
             // 부서진 포탑은 지나갈 수 없음
-            if (turrets[nx][ny].power <= 0)
+            if (!turrets[nx][ny].power)
                 continue;
 
             visited[nx][ny] = true;
@@ -183,7 +183,7 @@ void BombAttack(Point attacker, Point target) {
             continue;
 
         // 이미 부서진 포탑
-        if (turrets[nx][ny].power <= 0)
+        if (!turrets[nx][ny].power)
             continue;
 
         Damage({ nx, ny }, damage / 2);
@@ -194,7 +194,7 @@ void Repair() {
     for (int x = 0; x < N; x++) {
         for (int y = 0; y < M; y++) {
             // 부서진 포탑
-            if (turrets[x][y].power <= 0)
+            if (!turrets[x][y].power)
                 continue;
 
             // 이번 턴 공격과 관련된 포탑
@@ -229,9 +229,8 @@ void Init() {
 
             turrets[x][y].x = x;
             turrets[x][y].y = y;
-            turrets[x][y].lastAttack = 0;
 
-            if (turrets[x][y].power > 0)
+            if (turrets[x][y].power)
                 aliveCount++;
         }
     }
@@ -260,7 +259,7 @@ void Solve() {
             BombAttack(attacker, target);
 
         // 3. 포탑 부서짐
-        // Damage()에서 power <= 0이 되는 순간 aliveCount 감소
+        // Damage()에서 !power == True가 되는 순간 aliveCount 감소
 
         // 4. 포탑 정비
         Repair();
