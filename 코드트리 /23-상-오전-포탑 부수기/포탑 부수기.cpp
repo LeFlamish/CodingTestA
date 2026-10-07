@@ -1,5 +1,6 @@
 #include <iostream>
 #include <queue>
+#include <iomanip>
 #include <cstring>
 #include <algorithm>
 using namespace std;
@@ -198,6 +199,15 @@ void Repair() {
 
             turrets[x][y].power++;
         }
+    }
+}
+
+void Debug() {
+    for (int y = 1; y <= N; y++) {
+        for (int x = 1; x <= M; x++) {
+            cout << setw(4) << board[y][x] << ' ';
+        }
+        cout << '\n';
     }
 }
 
